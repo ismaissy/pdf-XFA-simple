@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="itext7" Version="9.2.0" />
     <PackageReference Include="itext7.pdfxfa" Version="5.0.2" />
+    <PackageReference Include="itextsharp" Version="5.5.13.3" />
   </ItemGroup>
 
 </Project>
