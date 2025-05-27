@@ -3,8 +3,8 @@
 //using System.Xml;
 //using iText.Kernel.Pdf;
 //using iText.Forms.Xfa;
-
-//class Program
+// 1
+//class Program   
 //{
 //    static void Main(string[] args)
 //    {
@@ -59,6 +59,71 @@ class Program
     static void Main()
     {
         string inputPdf = @"C:\Users\Windows 10 Pro\Desktop\YuliaKOCAS.pdf";
+        string outputPdf = @"C:\Users\Windows 10 Pro\Desktop\output_final.pdf";
+
+        using (PdfReader reader = new PdfReader(inputPdf))
+        using (FileStream fs = new FileStream(outputPdf, FileMode.Create, FileAccess.Write))
+        using (PdfStamper stamper = new PdfStamper(reader, fs))
+        {
+            AcroFields af = stamper.AcroFields;
+            XfaForm xfa = af.Xfa;
+
+            XmlDocument xfaDom = new XmlDocument();
+            xfaDom.PreserveWhitespace = true;
+            xfaDom.LoadXml(xfa.DatasetsNode.InnerXml);
+
+            // Показать все поля
+            Console.WriteLine("Все узлы XML XFA:");
+            PrintNodes(xfaDom.DocumentElement, "");
+
+            // Попробуй найти нужное поле
+            XmlNode node = xfaDom.SelectSingleNode("//*[local-name()='_01']");
+            if (node != null)
+            {
+                node.InnerText = "IVANOV";
+                Console.WriteLine("✅ Значение поля _01 изменено.");
+            }
+            else
+            {
+                Console.WriteLine("❌ Поле _01 не найдено.");
+            }
+
+            // ВАЖНО: перезаписать весь XML целиком
+            xfa.DatasetsNode.InnerXml = xfaDom.DocumentElement.InnerXml;
+        }
+
+        Console.WriteLine("✅ PDF сохранён: " + outputPdf);
+    }
+
+    static void PrintNodes(XmlNode node, string indent)
+    {
+        if (node.NodeType == XmlNodeType.Element)
+        {
+            Console.WriteLine($"{indent}{node.Name} = {node.InnerText}");
+        }
+
+        foreach (XmlNode child in node.ChildNodes)
+        {
+            PrintNodes(child, indent + "  ");
+        }
+    }
+}
+
+
+
+
+
+/* 3
+using System;
+using System.IO;
+using System.Xml;
+using iTextSharp.text.pdf;
+
+class Program
+{
+    static void Main()
+    {
+        string inputPdf = @"C:\Users\Windows 10 Pro\Desktop\YuliaKOCAS.pdf";
         string outputPdf = @"C:\Users\Windows 10 Pro\Desktop\output5.pdf";
 
         using (PdfReader reader = new PdfReader(inputPdf))
@@ -92,10 +157,10 @@ class Program
         Console.WriteLine("Изменения сохранены в " + outputPdf);
     }
 }
+*/
 
 
-
-/*
+/* 2
 using System;
 using System.IO;
 using System.Xml;
